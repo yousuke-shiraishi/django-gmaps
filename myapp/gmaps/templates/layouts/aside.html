@@ -1,0 +1,141 @@
+<aside>
+    <article>
+      {% load static %}
+      {% if user.is_authenticated %}
+        <h1 class="text-center">あなたの画像</h1>
+        <br>
+        <div class="text-center"><img src="{{ user.image.url }}" class="img-rounded"></div>
+        <br>
+        <div class="text-center">{{ user.username }}</div>
+        <br>
+        <h1 class="text-center">絞り込み検索</h1>
+
+        <form action="{% url 'gmap_search' %}" method="get" id="form1">
+          <div>
+            <p>
+              <label class="center-block">名前</label>
+            </p>
+          </div>
+          <p>
+            <input class="center-block" type="text" name="username" required="required"><br>
+          </p>
+          <div>
+            <p>
+              <label class="center-block">生年月日</label>
+            </p>
+          </div>
+          <p>
+            <select id="birth_year" name="birth_year" class="center-block">
+            </select>
+
+            <select id="birth_month" name="birth_month" class="center-block">
+            </select>
+
+            <select id="birth_day" name="birth_day" class="center-block">
+            </select>
+          </p>
+          <div>
+            <p>
+              <input type="submit" value="検索する" class="center-block">
+            </p>
+          </div>
+        </form>
+  
+        <form action="{% url 'gmap_search' %}" method="get" id="form2">
+          <div>
+            <p>
+              <label class="center-block">メールアドレス</label>
+            </p>
+          </div>
+          <p>
+            <input class="center-block" type="email" name="email" required="required"><br>
+          </p>
+          <div>
+            <p>
+              <label class="center-block">合言葉</label>
+            </p>
+          </div>
+          <p>
+            <input class="center-block" type="text" name="magic_word" required="required">
+          </p>
+          <div>
+            <p>
+              <input type="submit" value="検索する" class="center-block">
+            </p>
+          </div>
+        </form>
+  
+        <div class="form-group text-center">
+          <div class="radio">
+            <input type="radio" id="radio1" name="radio_search" value="public" checked="checked">
+            <strong>全体に公開されているものを検索</strong>
+          </div>
+          <div class="radio">
+            <input type="radio" id="radio2" name="radio_search" value="private">
+            <strong>プライベートのものを検索</strong>
+          </div>
+        </div>
+        <script src="{% static 'gmaps/js/search_change.js' %}"></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', (event) => {
+         // 年の選択肢を生成
+         for (let i = 1900; i <= 2051; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                document.getElementById("birth_year").appendChild(option);
+            }
+        
+            // 月の選択肢を生成
+            for (let i = 1; i <= 12; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                document.getElementById("birth_month").appendChild(option);
+            }
+        
+            // 日の選択肢を生成
+            for (let i = 1; i <= 31; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                document.getElementById("birth_day").appendChild(option);
+            }
+        });
+          document.addEventListener("DOMContentLoaded", function() {
+            const form1 = document.getElementById("form1");
+            const form2 = document.getElementById("form2");
+            const radio1 = document.getElementById("radio1");
+            const radio2 = document.getElementById("radio2");
+          
+            form1.addEventListener("submit", function(event) {
+              applyRadioValueToForm(form1);
+            });
+            form2.addEventListener("submit", function(event) {
+              applyRadioValueToForm(form2);
+            });
+          
+            function applyRadioValueToForm(form) {
+              const selectedValue = radio1.checked ? radio1.value : radio2.value;
+              const hiddenInput = document.createElement("input");
+              hiddenInput.type = "hidden";
+              hiddenInput.name = "radio_search";
+              hiddenInput.value = selectedValue;
+              form.appendChild(hiddenInput);
+            }
+          });
+          </script>
+      {% else %}
+        <div class="box22">
+          <i class="fa fa-heart faa-pulse animated fa-example">
+            <p>
+              このサイトはGoogleMapを使って現在地にマーカーを立てられます。マーカーには写真とタイトルとコメントが載せられるよ<br>
+              ログインすればプライベートなマーカーはメールアドレスと合言葉で、公開のもの氏名と年齢で検索できます。<br>
+              自分以外の記事は削除できないよ楽しんでいってね！
+            </p>
+          </i>
+        </div>
+      {% endif %}
+    </article>
+  </aside>
+  

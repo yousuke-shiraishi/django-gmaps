@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<h1 class="text-center">New Gmap</h1>
+<script>
+    if (navigator.geolocation) {
+        alert("この端末では位置情報が取得できます");
+        navigator.geolocation.getCurrentPosition((position) => {
+          document.getElementById('gmap_latitude').value = position.coords.latitude;
+          document.getElementById('gmap_longitude').value = position.coords.longitude;
+        }),
+        function (error) {
+          switch (error.code) {
+            case 1:
+              alert("位置情報の利用が許可されていません");
+              break;
+            case 2:
+              alert("現在位置が取得できませんでした");
+              break;
+            case 3:
+              alert("タイムアウトになりました");
+              break;
+            default:
+              alert("その他のエラー(エラーコード:" + error.code + ")");
+              break;
+          }
+        }
+    } else {
+        alert("この端末では位置情報が取得できません");
+    }
+</script>
+
+{% if form.errors %}
+  <div id="error_explanation">
+    <h2>{{ form.errors|length }} error(s). Gmaps could not be saved:</h2>
+    <ul>
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<script src="{% static 'gmaps/js/magic_word_change.js' %}"></script>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% for field in form.visible_fields %}
+        {% if field.name != 'user' %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+            </p>
+        {% endif %}
+    {% endfor %}
+  <div class="actions">
+    <input type="submit" value="Submit" class="center-block">
+  </div>
+</form>
+
+<br>
+<div class="form-group text-center">
+  <input type="checkbox" class="magic_c" name="magic_word_set" onclick="toggle('#magic_w', this)">全体に公開する
+</div>
+<div class="text-center">
+  <a href="{% url 'gmap_list' %}">Back</a>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div id="gmaps"></div>
+    <br>
+    <script type="text/javascript">
+        window.addresses = JSON.parse('{{ json_data|safe }}');
+    </script>
+    <div class="text-center">
+        <strong><a href="{% url 'gmap_create' %}" class="marker_description btn btn-primary">マーカー情報を登録する</a></strong>
+    </div>
+{% endblock %}
