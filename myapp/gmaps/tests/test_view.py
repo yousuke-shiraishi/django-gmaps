@@ -126,14 +126,12 @@ def test_private_search(client,create_users_and_gmaps):
         is_logged_in = client.login(username=user.username,password='password')
         assert is_logged_in == True
         email = user.email
-        magic_word = "magic_word"  # この値はテスト環境で適切に設定してください
+        magic_word = "magic_word"
         magic_word_hash = hashlib.md5(magic_word.encode()).hexdigest()
 
-        # パラメータを指定してリクエスト
-        url = reverse('gmap_private_search')  # URL名に合わせて変更
+        url = reverse('gmap_private_search')
         response = client.get(url, {'email': email, 'magic_word': magic_word})
 
-        # ステータスコードと返されるオブジェクトを確認
         assert response.status_code == 200
         queryset = Gmap.objects.filter(user__email=email).filter(Q(magic_word=magic_word_hash) & ~Q(magic_word=""))
 
@@ -149,14 +147,10 @@ def test_private_search_unauthenticated(client,create_users_and_gmaps):
 
     for user in user_list:
         email = user.email
-        magic_word = "magic_word"  # この値はテスト環境で適切に設定してください
-        magic_word_hash = hashlib.md5(magic_word.encode()).hexdigest()
-
-        # パラメータを指定してリクエスト
-        url = reverse('gmap_private_search')  # URL名に合わせて変更
+        magic_word = "magic_word"
+        url = reverse('gmap_private_search')
         response = client.get(url, {'email': email, 'magic_word': magic_word})
 
-        # ステータスコードと返されるオブジェクトを確認
         assert response.status_code == 302
     
 
@@ -184,32 +178,5 @@ def test_public_search(client, create_users_and_gmaps_no_magic_word):
 
         assert list(response.context['gmaps']) == list(queryset)
 
-
-# def test_private_search_authenticated(api_client, token, user, gmap):
-#     url = reverse('gmaps-private_search')
-#     api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-#     gmap.magic_word = "test"
-#     gmap.save()
-
-#     data = {'email': user.email, 'magic_word': "test"}
-
-#     response = api_client.get(url, data)
-
-#     assert response.status_code == HTTP_200_OK
-#     assert response.data[0]['id'] == str(gmap.id)
-
-
-# def test_private_search_unauthenticated(api_client, user, gmap):
-#     url = reverse('gmaps-private_search')
-
-#     gmap.magic_word = "test"
-#     gmap.save()
-
-#     data = {'email': user.email, 'magic_word': "test"}
-
-#     response = api_client.get(url, data)
-
-#     assert response.status_code == HTTP_401_UNAUTHORIZED
 
 
